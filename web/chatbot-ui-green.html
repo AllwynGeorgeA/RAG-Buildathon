@@ -473,6 +473,7 @@ body.chat-started .chat-thread { display: flex; }
   const chatScroll   = document.getElementById('chatScroll');
   const hero         = document.getElementById('hero');
   const chatInput    = document.getElementById('chatInput');
+  const DEFAULT_INPUT_PLACEHOLDER = chatInput.placeholder;
   const sendBtn      = document.getElementById('sendBtn');
   const micBtn       = document.getElementById('micBtn');
   const webSearchBtn = document.getElementById('webSearchBtn');
@@ -658,6 +659,7 @@ body.chat-started .chat-thread { display: flex; }
     chatThread.innerHTML = '';
     showChatStarted(false);
     renderHistory();
+    chatInput.placeholder = DEFAULT_INPUT_PLACEHOLDER;
     chatInput.focus();
   }
   newChatBtn.addEventListener('click', startNewChat);
@@ -769,8 +771,17 @@ body.chat-started .chat-thread { display: flex; }
         t.textContent = open ? 'Hide sources' : `View ${n} source${n > 1 ? 's' : ''}`;
       });
     });
+    // Follow-up chips are the ASSISTANT asking the USER for missing info
+    // (e.g. "Which state are you farming in?") — clicking one must never
+    // resend that same question as if the user said it (infinite loop of
+    // "I don't have that info"). Instead, prompt the user to type their
+    // actual answer.
     bubble.querySelectorAll('.followup-chip').forEach(c => {
-      c.addEventListener('click', () => sendMessage(c.textContent));
+      c.addEventListener('click', () => {
+        chatInput.value = '';
+        chatInput.placeholder = `Your answer — “${c.textContent}”`;
+        chatInput.focus();
+      });
     });
 
     if (scroll) scrollToBottom();
@@ -791,6 +802,7 @@ body.chat-started .chat-thread { display: flex; }
     const text = (rawText || '').trim();
     if (!text) return;
     chatInput.value = '';
+    chatInput.placeholder = DEFAULT_INPUT_PLACEHOLDER;
     addUserMessage(text);
     addTyping();
 
