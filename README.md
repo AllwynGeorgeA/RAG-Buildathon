@@ -79,11 +79,12 @@ that confidence without evidence is actively harmful.
    from evidence only, without arguing or inventing a rebuttal.
 7. **Multimodal ingestion** — PDF, image (OCR), Excel/CSV, voice.
 8. **Offline knowledge base by default** — the cited, evidence-first answer
-   never depends on a live web request. An *optional*, off-by-default,
-   per-message live web search exists as a clearly separate, unverified
-   channel (see [Live web search](#live-web-search-opt-in)) — a user must
-   explicitly opt in, and its results are never blended into the cited
-   answer or run through the hallucination guard.
+   never depends on a live web request, regardless of the toggle below. An
+   *optional* per-message live web search exists as a clearly separate,
+   unverified channel (see [Live web search](#live-web-search-opt-in)),
+   toggleable per message (on by default in the shipped UI) — its results
+   are never blended into the cited answer or run through the
+   hallucination guard, no matter which way the toggle is set.
 9. **No hallucinated "breaking news"** — explicitly refuses "what's new
    today" questions; states the knowledge base's last-indexed date.
 10. **Source-level citations** — "View source" links back to the real
@@ -182,10 +183,19 @@ ingested text. Every edge carries the `document_id` it came from.
 
 ## Live web search (opt-in)
 
-Off by default (`WEB_SEARCH_ENABLED=false`). When a deployment turns it on
-*and* a user explicitly opts in per message (the 🌐 globe toggle in the
-green web UI's composer), `app/websearch/search.py` runs a live DuckDuckGo
-HTML search (no API key needed) and attaches raw results (`title`, `url`,
+Two independent switches, both must allow it:
+
+- **Operator switch** — `WEB_SEARCH_ENABLED` in `.env` (off by default in
+  `.env.example`; this repo's own `.env` has it turned on). A deployment
+  that wants the feature unavailable to anyone sets this to `false` and
+  nothing below matters.
+- **Per-message toggle** — the 🌐 globe icon in the green UI's composer.
+  It now defaults to **on** in the shipped UI (a click turns it off for
+  subsequent messages), but the request body still carries an explicit
+  `web_search: true/false` either way — the backend never assumes it.
+
+When both agree, `app/websearch/search.py` runs a live DuckDuckGo HTML
+search (no API key needed) and attaches raw results (`title`, `url`,
 `snippet`) to `ChatResponse.web_results`, with `web_search_used: true`.
 
 This is deliberately **not** integrated into the RAG pipeline:
@@ -264,10 +274,10 @@ real conversations, calls `/conversations/{id}/messages` (same
 `generate_answer` pipeline as Streamlit), and renders confidence badges,
 eligibility verdicts, expandable evidence citations, and follow-up chips
 straight from the actual `ChatResponse`. Its composer also has a 🌐 toggle
-for the opt-in [live web search](#live-web-search-opt-in) — off by default,
-and shown in its own dashed "unverified" box, never mixed into the cited
-answer above it. The other 6 screens are static mockups sharing the same
-visual language, not yet wired to real endpoints.
+for the opt-in [live web search](#live-web-search-opt-in) — on by default
+in this UI, results shown in their own dashed "unverified" box, never mixed
+into the cited answer above it. The other 6 screens are static mockups
+sharing the same visual language, not yet wired to real endpoints.
 Streamlit's sidebar has an **"🟢 Open modern Green UI"** button linking here —
 it's a real link, not an embed, since browsers commonly block a same-page
 iframe pointing at a different localhost port.

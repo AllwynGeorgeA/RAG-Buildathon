@@ -543,7 +543,7 @@ body.chat-started .chat-thread { display: flex; }
         <input class="composer-input" id="chatInput" type="text" placeholder="Ask AI anything about crops, schemes, eligibility…" aria-label="Chat input">
         <div class="composer-right">
           <span class="model-pill" id="modelPill"><span class="model-dot" id="modelDot"></span><span id="modelText">Connecting…</span></span>
-          <button class="composer-icon" id="webSearchBtn" title="Toggle live web search (unverified, supplementary — off by default)">
+          <button class="composer-icon active" id="webSearchBtn" title="Live web search ON for your next message (unverified, supplementary) — click to turn off">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
           </button>
           <button class="composer-icon" id="micBtn" title="Voice input">
@@ -555,7 +555,7 @@ body.chat-started .chat-thread { display: flex; }
         </div>
       </div>
     </div>
-    <div class="composer-help">Press Enter to send · <span id="webSearchHint">🌐 click the globe to add live web results (unverified, shown separately)</span></div>
+    <div class="composer-help">Press Enter to send · <span id="webSearchHint">🌐 live web search ON for your next message</span></div>
     <div class="tribute-strip" id="tributeStrip" hidden>
       <img class="tribute-avatar" id="tributeAvatar" src="assets/nammalvar.jpg" alt="Dr. G. Nammalvar">
       <span class="tribute-text">In memory of <strong>Dr. G. Nammalvar</strong> — "Agriculture is not business… it's a way of life."</span>
@@ -574,7 +574,7 @@ body.chat-started .chat-thread { display: flex; }
   const micBtn       = document.getElementById('micBtn');
   const webSearchBtn = document.getElementById('webSearchBtn');
   const webSearchHint = document.getElementById('webSearchHint');
-  let webSearchOn = false;
+  let webSearchOn = true;
   const modelPill    = document.getElementById('modelPill');
   const modelDot     = document.getElementById('modelDot');
   const sideHistory  = document.getElementById('sideHistory');
@@ -995,8 +995,8 @@ body.chat-started .chat-thread { display: flex; }
     webSearchOn = !webSearchOn;
     webSearchBtn.classList.toggle('active', webSearchOn);
     webSearchBtn.title = webSearchOn
-      ? 'Live web search ON for your next message (unverified, supplementary)'
-      : 'Toggle live web search (unverified, supplementary — off by default)';
+      ? 'Live web search ON for your next message (unverified, supplementary) — click to turn off'
+      : 'Live web search off — click to turn on (unverified, supplementary)';
     webSearchHint.textContent = webSearchOn
       ? '🌐 live web search ON for your next message'
       : '🌐 click the globe to add live web results (unverified, shown separately)';
