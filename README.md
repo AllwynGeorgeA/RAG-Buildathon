@@ -395,7 +395,9 @@ python scripts/evaluate.py
 
 ## Demo walkthrough
 
-See [`docs/demo-script.md`](docs/demo-script.md) for the full 3-minute flow.
+See [`docs/demo-script.md`](docs/demo-script.md) for the full 3-minute flow,
+and [`docs/dataset-coverage.md`](docs/dataset-coverage.md) for exactly which
+schemes are safe to name live vs. which will (correctly) refuse.
 
 ## Known limitations
 
