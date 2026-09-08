@@ -1,0 +1,61 @@
+# KrishiMitra AI — Vikaspedia crawl configuration
+# Consumed by app/ingestion/crawler_config.py. Edit this to change crawl scope
+# WITHOUT touching code. The crawler NEVER runs during user chat — only via
+# `scripts/crawl_vikaspedia.py`, explicitly, offline.
+
+# Seed URLs point directly at individual scheme content pages, discovered via
+# https://en.vikaspedia.in/sitemap.xml (the category "hub" pages like
+# /agriculture/policies-and-schemes render their scheme list client-side
+# without plain <a href> links, so we crawl the sitemap-verified content
+# pages directly instead of relying on link discovery from the hub).
+seed_urls:
+  - https://en.vikaspedia.in/viewcontent/agriculture/policies-and-schemes/crops-related/pradhan-mantri-kisan-samman-nidhi
+  - https://en.vikaspedia.in/viewcontent/agriculture/policies-and-schemes/crops-related/comprehensive-guide-to-the-pradhan-mantri-kisan-samman-nidhi-(pm-kisan)-scheme
+  - https://en.vikaspedia.in/viewcontent/agriculture/agri-insurance/pradhan-mantri-fasal-bima-yojana
+  - https://en.vikaspedia.in/viewcontent/agriculture/national-schemes-for-farmers/soil-health-card-soil-conservation-and-micronutrients
+  - https://en.vikaspedia.in/viewcontent/agriculture/policies-and-schemes/crops-related/krishi-unnati-yojana/soil-health-card
+  - https://en.vikaspedia.in/viewcontent/agriculture/policies-and-schemes/crops-related/operational-guidelines-for-pradhan-mantrikrishisinchaiyojana-pmksy-harkhetkopani-hkkp-ground-water-irrigation
+  - https://en.vikaspedia.in/viewcontent/agriculture/agri-credit/revised-kisan-credit-card-scheme
+  - https://en.vikaspedia.in/viewcontent/agriculture/agri-credit/interest-subvention-scheme-for-farmers
+  - https://en.vikaspedia.in/viewcontent/energy/policy-support/renewable-energy-1/solar-energy/pm-kusum-scheme
+
+allowed_domains:
+  - vikaspedia.in
+  - en.vikaspedia.in
+  - static.vikaspedia.in
+
+include_patterns:
+  - agriculture
+  - scheme
+  - policies-and-schemes
+  - national-schemes-for-farmers
+  - state-specific-schemes-for-farmers
+  - farm-mechanization
+  - crop-production
+  - e-krishi
+  - schemesall
+  - viewcontent
+
+exclude_patterns:
+  - login
+  - feedback
+  - search
+  - /gu/
+  - /te/
+  - /mr/
+  - /bn/
+  - /or/
+  - /kn/
+  - /ml/
+  - /pa/
+  - /as/
+
+max_depth: 4
+max_pages: 200
+
+# politeness
+rate_limit_seconds: 2.0
+request_timeout_seconds: 30
+max_retries: 3
+user_agent: "KrishiMitraAI-Bot/1.0 (+educational-research)"
+respect_robots_txt: true

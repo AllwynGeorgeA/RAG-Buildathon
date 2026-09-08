@@ -1,0 +1,171 @@
+/* KrishiMitra AI — premium agriculture theme
+   Palette: deep forest green / leaf green / soft cream / white, subtle gold accent.
+   Deliberately NOT a generic chatbot look: government + agriculture + trust. */
+
+:root {
+  --km-bg: #f7f5ee;
+  --km-surface: #ffffff;
+  --km-forest: #0b3d24;
+  --km-forest-dark: #072b19;
+  --km-leaf: #2e7d4f;
+  --km-leaf-light: #e7f3ea;
+  --km-cream: #f7f5ee;
+  --km-gold: #b8873a;
+  --km-text: #1c2b21;
+  --km-text-muted: #55665a;
+  --km-border: #dfe6de;
+  --km-danger: #a4423a;
+  --km-warning: #b8873a;
+  --km-success: #2e7d4f;
+}
+
+.stApp {
+  background: var(--km-bg);
+}
+
+/* Header banner */
+.km-header {
+  background: linear-gradient(120deg, var(--km-forest-dark) 0%, var(--km-forest) 55%, var(--km-leaf) 100%);
+  color: #ffffff;
+  padding: 22px 28px;
+  border-radius: 14px;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 18px rgba(11, 61, 36, 0.18);
+}
+.km-header h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+.km-header p {
+  margin: 2px 0 0 0;
+  color: #d7ecdd;
+  font-size: 0.92rem;
+}
+.km-header .km-badge {
+  background: rgba(255,255,255,0.14);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 999px;
+  padding: 5px 14px;
+  font-size: 0.78rem;
+  color: #eafbee;
+}
+
+/* Cards */
+.km-card {
+  background: var(--km-surface);
+  border: 1px solid var(--km-border);
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+  box-shadow: 0 1px 3px rgba(11, 61, 36, 0.06);
+}
+
+.km-scheme-card {
+  background: var(--km-surface);
+  border: 1px solid var(--km-border);
+  border-left: 5px solid var(--km-leaf);
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+}
+.km-scheme-card.strong { border-left-color: var(--km-success); }
+.km-scheme-card.moderate { border-left-color: var(--km-gold); }
+.km-scheme-card.weak { border-left-color: var(--km-text-muted); }
+
+.km-scheme-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--km-forest-dark);
+  margin-bottom: 2px;
+}
+
+.km-pill {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-right: 6px;
+}
+.km-pill.strong { background: var(--km-leaf-light); color: var(--km-success); }
+.km-pill.moderate { background: #fbf1de; color: var(--km-gold); }
+.km-pill.weak { background: #f0f0f0; color: var(--km-text-muted); }
+
+.km-pill.likely_eligible { background: var(--km-leaf-light); color: var(--km-success); }
+.km-pill.possibly_eligible { background: #fbf1de; color: var(--km-gold); }
+.km-pill.insufficient_information { background: #f0f0f0; color: var(--km-text-muted); }
+.km-pill.likely_not_eligible { background: #fbeceb; color: var(--km-danger); }
+
+.km-section-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--km-text-muted);
+  margin: 10px 0 4px 0;
+}
+
+/* Trust panel */
+.km-trust-panel {
+  background: var(--km-leaf-light);
+  border: 1px solid #cfe6d6;
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin-bottom: 14px;
+}
+.km-trust-title {
+  font-weight: 700;
+  color: var(--km-forest-dark);
+  margin-bottom: 8px;
+}
+.km-trust-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.88rem;
+  padding: 3px 0;
+  color: var(--km-text);
+}
+
+/* Evidence panel */
+.km-evidence-item {
+  background: var(--km-cream);
+  border: 1px solid var(--km-border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  font-size: 0.86rem;
+}
+.km-evidence-source {
+  font-weight: 700;
+  color: var(--km-forest);
+}
+
+/* Confidence badge */
+.km-confidence-high { color: var(--km-success); font-weight: 700; }
+.km-confidence-medium { color: var(--km-gold); font-weight: 700; }
+.km-confidence-low { color: var(--km-danger); font-weight: 700; }
+
+/* Objection / refusal card */
+.km-refusal-card {
+  background: #fbeceb;
+  border: 1px solid #f0d3d1;
+  border-radius: 10px;
+  padding: 14px 16px;
+  color: #6b241e;
+}
+
+.km-source-label-vikaspedia { color: var(--km-forest); font-weight: 600; }
+.km-source-label-user_upload { color: var(--km-gold); font-weight: 600; }
+.km-source-label-trusted_document { color: var(--km-leaf); font-weight: 600; }
+
+.km-footer-note {
+  color: var(--km-text-muted);
+  font-size: 0.78rem;
+  text-align: center;
+  margin-top: 24px;
+}

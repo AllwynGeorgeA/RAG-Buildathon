@@ -1,0 +1,44 @@
+version: "3.9"
+
+# KrishiMitra AI — local development stack.
+# Vector store (Chroma) and knowledge graph (NetworkX) are file-backed under
+# ./data, so no separate database container is required for the default
+# configuration (VECTOR_STORE_PROVIDER=chroma).
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: uvicorn app.api.main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+      - ./config:/app/config
+
+  ui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: streamlit run app/ui/streamlit_app.py --server.port 8501 --server.address 0.0.0.0
+    ports:
+      - "8501:8501"
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+      - ./config:/app/config
+    depends_on:
+      - api
+
+  # Optional Go service for ingestion job orchestration (see go-service/README.md).
+  # Not required for the core RAG/chat experience.
+  go-ingestion:
+    build:
+      context: ./go-service
+    ports:
+      - "8090:8090"
+    profiles: ["go"]
