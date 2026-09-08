@@ -3,6 +3,7 @@ from __future__ import annotations
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
+from app.api.routes.chat import _maybe_attach_web_results
 from app.conversations import store
 from app.core.logging import get_logger
 from app.llm.answer_generator import generate_answer
@@ -28,6 +29,7 @@ class PostMessageRequest(BaseModel):
     query: str
     profile: FarmerProfile | None = None
     debug: bool = False
+    web_search: bool = False
 
 
 @router.get("")
@@ -84,5 +86,6 @@ def post_message(conversation_id: str, request: PostMessageRequest) -> ChatRespo
         chat_history=chat_history,
         debug=request.debug,
     )
+    _maybe_attach_web_results(response, request.query, request.web_search)
     store.add_message(conversation_id, "assistant", response.answer, response=response)
     return response

@@ -23,23 +23,24 @@ chatbot — every answer follows the chain:
 6. [RAG pipeline](#rag-pipeline)
 7. [Knowledge graph](#knowledge-graph)
 8. [Guardrails](#guardrails)
-9. [Eligibility engine](#eligibility-engine)
-10. [Evaluation](#evaluation)
-11. [Data ingestion](#data-ingestion)
-12. [Supported inputs](#supported-inputs)
-13. [Web UI (green theme)](#web-ui-green-theme)
-14. [Conversation history](#conversation-history)
-15. [Installation](#installation)
-16. [Environment variables](#environment-variables)
-17. [Running the crawler](#running-the-crawler)
-18. [Building the index & graph](#building-the-index--graph)
-19. [Running Streamlit](#running-streamlit)
-20. [Running the API](#running-the-api)
-21. [Running tests](#running-tests)
-22. [Running evaluation](#running-evaluation)
-23. [Demo walkthrough](#demo-walkthrough)
-24. [Known limitations](#known-limitations)
-25. [Future roadmap](#future-roadmap)
+9. [Live web search (opt-in)](#live-web-search-opt-in)
+10. [Eligibility engine](#eligibility-engine)
+11. [Evaluation](#evaluation)
+12. [Data ingestion](#data-ingestion)
+13. [Supported inputs](#supported-inputs)
+14. [Web UI (green theme)](#web-ui-green-theme)
+15. [Conversation history](#conversation-history)
+16. [Installation](#installation)
+17. [Environment variables](#environment-variables)
+18. [Running the crawler](#running-the-crawler)
+19. [Building the index & graph](#building-the-index--graph)
+20. [Running Streamlit](#running-streamlit)
+21. [Running the API](#running-the-api)
+22. [Running tests](#running-tests)
+23. [Running evaluation](#running-evaluation)
+24. [Demo walkthrough](#demo-walkthrough)
+25. [Known limitations](#known-limitations)
+26. [Future roadmap](#future-roadmap)
 
 ---
 
@@ -77,7 +78,12 @@ that confidence without evidence is actively harmful.
 6. **Objection handling** — "my neighbor said X" is detected and answered
    from evidence only, without arguing or inventing a rebuttal.
 7. **Multimodal ingestion** — PDF, image (OCR), Excel/CSV, voice.
-8. **Offline knowledge base** — no live scraping during chat, ever.
+8. **Offline knowledge base by default** — the cited, evidence-first answer
+   never depends on a live web request. An *optional*, off-by-default,
+   per-message live web search exists as a clearly separate, unverified
+   channel (see [Live web search](#live-web-search-opt-in)) — a user must
+   explicitly opt in, and its results are never blended into the cited
+   answer or run through the hallucination guard.
 9. **No hallucinated "breaking news"** — explicitly refuses "what's new
    today" questions; states the knowledge base's last-indexed date.
 10. **Source-level citations** — "View source" links back to the real
@@ -117,13 +123,14 @@ User → Input Guardrail → Profile Extractor → Hybrid Retrieval
 | Lexical search | `rank-bm25`, fused with vector search via Reciprocal Rank Fusion |
 | Knowledge graph | NetworkX (`MultiDiGraph`), persisted as a pickle |
 | Crawling | Playwright (Vikaspedia is client-rendered; a plain HTTP GET returns an empty shell) |
+| Live web search *(opt-in)* | `requests` + `beautifulsoup4` against DuckDuckGo's HTML endpoint, no API key — off by default, never blended into the cited answer (see [Live web search](#live-web-search-opt-in)) |
 | Document processing | PyMuPDF/pypdf (PDF), Pillow + pytesseract (image OCR, pluggable), pandas/openpyxl (Excel/CSV), OpenAI audio API (voice, pluggable) |
 | Guardrails | Deterministic regex/keyword logic (primary) + optional NeMo Guardrails self-check (secondary, opt-in) |
 | Evaluation | Custom deterministic harness (primary) + optional DeepEval LLM-as-judge (secondary, opt-in) |
 | Config | Pydantic Settings + `.env` |
 | Conversation history | SQLite (stdlib `sqlite3`, no ORM) — `app/conversations/`, one row per conversation/message, survives restarts |
 | Web UI | Static HTML/CSS/JS (`web/`), served by FastAPI at `/ui`, calling the same `/chat`-backed `/conversations` API — no build step, no framework |
-| Testing | pytest (72+ tests) |
+| Testing | pytest (81+ tests) |
 | Optional high-perf service | Go (stdlib-only ingestion job queue — see `go-service/`) |
 
 ## RAG pipeline
@@ -172,6 +179,30 @@ ingested text. Every edge carries the `document_id` it came from.
   card is never shown with zero verifiable citations.
 - **Prompt-injection framing**: retrieved documents are explicitly instructed
   to be treated as **data, not instructions**, in the system prompt.
+
+## Live web search (opt-in)
+
+Off by default (`WEB_SEARCH_ENABLED=false`). When a deployment turns it on
+*and* a user explicitly opts in per message (the 🌐 globe toggle in the
+green web UI's composer), `app/websearch/search.py` runs a live DuckDuckGo
+HTML search (no API key needed) and attaches raw results (`title`, `url`,
+`snippet`) to `ChatResponse.web_results`, with `web_search_used: true`.
+
+This is deliberately **not** integrated into the RAG pipeline:
+
+- Never fed into the LLM prompt, never subject to the hallucination guard
+  or citation verification — there's no vetted source to verify a live
+  result *against*.
+- Rendered as its own dashed, distinctly-labeled "⚠️ unverified" box in the
+  UI, physically separate from the cited `answer` and its `evidence` list.
+- Any failure (network, parsing, rate-limiting) returns an empty list —
+  a broken web search never breaks the underlying cited answer.
+
+This exists for users who want a live pointer to an official portal or a
+same-day detail (see [Solution & differentiators](#solution--differentiators)
+#8) without weakening the core guarantee for everyone else: the answer you
+get by default, with the toggle off, is exactly as offline and cited as
+before this feature existed.
 
 ## Eligibility engine
 
@@ -232,8 +263,11 @@ The Chat screen is fully wired to the live API — no mock data: it creates
 real conversations, calls `/conversations/{id}/messages` (same
 `generate_answer` pipeline as Streamlit), and renders confidence badges,
 eligibility verdicts, expandable evidence citations, and follow-up chips
-straight from the actual `ChatResponse`. The other 6 screens are static
-mockups sharing the same visual language, not yet wired to real endpoints.
+straight from the actual `ChatResponse`. Its composer also has a 🌐 toggle
+for the opt-in [live web search](#live-web-search-opt-in) — off by default,
+and shown in its own dashed "unverified" box, never mixed into the cited
+answer above it. The other 6 screens are static mockups sharing the same
+visual language, not yet wired to real endpoints.
 Streamlit's sidebar has an **"🟢 Open modern Green UI"** button linking here —
 it's a real link, not an embed, since browsers commonly block a same-page
 iframe pointing at a different localhost port.
@@ -292,6 +326,8 @@ See [`.env.example`](.env.example) for the full, commented list. Key ones:
 | `DEEPEVAL_ENABLED` | Optional LLM-as-judge evaluation layer. |
 | `API_PORT` | Port FastAPI/uvicorn binds (default `8000`). Both the green web UI's URL and Streamlit's sidebar link to it are built from this — keep them in sync if you change it. |
 | `CONVERSATIONS_DB_PATH` | SQLite file for persisted chat history (default `data/conversations.db`). |
+| `WEB_SEARCH_ENABLED` | Master switch for opt-in live web search (default `false`). See [Live web search](#live-web-search-opt-in). |
+| `WEB_SEARCH_MAX_RESULTS` / `WEB_SEARCH_TIMEOUT_SECONDS` | Result cap and request timeout for that live search. |
 
 ## Running the crawler
 
@@ -346,9 +382,10 @@ static web UI at `/ui` (redirected to from `/`).
 pytest
 ```
 
-72+ tests across guardrails, retrieval (chunking/reranking/RRF), knowledge
+81+ tests across guardrails, retrieval (chunking/reranking/RRF), knowledge
 graph, eligibility engine, citations, ingestion (PDF/Excel/security),
-conversation history, and full end-to-end answer generation.
+conversation history, live web search (network calls mocked — this suite
+stays fully offline), and full end-to-end answer generation.
 
 ## Running evaluation
 

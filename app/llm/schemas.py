@@ -109,6 +109,17 @@ class FarmerProfile(BaseModel):
     category: str | None = None  # SC/ST/general/women etc, only if user provides
 
 
+class WebResult(BaseModel):
+    """One live web search hit — explicitly NOT part of the vetted, cited
+    knowledge base. Never fed into the hallucination guard or claim
+    verification; always rendered as its own clearly-labeled, unverified
+    channel, never blended into `answer` or `evidence`."""
+
+    title: str
+    url: str
+    snippet: str = ""
+
+
 class ChatResponse(BaseModel):
     answer: str
     relevant: bool
@@ -123,3 +134,7 @@ class ChatResponse(BaseModel):
     guardrail_triggered: str | None = None
     generated_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     debug: dict | None = None
+    # Opt-in live web search (see app/websearch/) — off by default, never
+    # mixed into the cited/verified answer above.
+    web_search_used: bool = False
+    web_results: list[WebResult] = Field(default_factory=list)

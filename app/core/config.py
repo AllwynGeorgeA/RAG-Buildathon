@@ -68,6 +68,15 @@ class Settings(BaseSettings):
     nemo_guardrails_config_path: str = "config/nemo_guardrails"
     deepeval_enabled: bool = False
 
+    # ---- Optional live web search (opt-in per message, see app/websearch/) ----
+    # Off by default: this app's core guarantee is an offline, cited knowledge
+    # base with no live scraping during chat. When a user explicitly opts in
+    # (UI toggle) AND this is true, live results are fetched and shown in a
+    # clearly separate, unverified channel — never blended into the cited answer.
+    web_search_enabled: bool = False
+    web_search_max_results: int = 4
+    web_search_timeout_seconds: int = 6
+
     # ---- Uploads / security ----
     max_upload_size_mb: int = 15
     allowed_upload_extensions: str = ".pdf,.png,.jpg,.jpeg,.xlsx,.xls,.csv,.wav,.mp3,.m4a"

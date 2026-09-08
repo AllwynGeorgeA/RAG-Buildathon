@@ -43,6 +43,9 @@ pytesseract==0.3.13
 # Web crawling
 playwright==1.56.0
 
+# Optional live web search (app/websearch/) — HTML parsing only, no API key
+beautifulsoup4==4.13.4
+
 # Utilities
 PyYAML==6.0.3
 requests==2.34.2
