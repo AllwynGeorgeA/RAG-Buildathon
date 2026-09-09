@@ -215,7 +215,7 @@ body { background: var(--bg); color: var(--text-pri); display: flex; overflow: h
         <div class="form-grid">
           <div class="field"><label for="pName">Display name</label><input id="pName" type="text" placeholder="e.g. Ramesh Kumar"></div>
           <div class="field"><label for="pState">State</label>
-            <select id="pState"><option>Uttar Pradesh</option><option>Maharashtra</option><option>Punjab</option><option>Bihar</option><option>Karnataka</option></select>
+            <select id="pState"><option>Uttar Pradesh</option><option>Maharashtra</option><option>Punjab</option><option>Bihar</option><option>Karnataka</option><option>Tamil Nadu</option></select>
           </div>
           <div class="field"><label for="pCrop">Primary crop</label>
             <select id="pCrop"><option>Wheat</option><option>Rice</option><option>Sugarcane</option><option>Cotton</option><option>Pulses</option></select>
@@ -286,12 +286,59 @@ body { background: var(--bg); color: var(--text-pri); display: flex; overflow: h
 </div>
 
 <script>
+  // Real persistence (per-browser, via localStorage) — "Save changes" used
+  // to be decorative (just flashed a toast, never stored anything, so a
+  // refresh silently lost everything). Session-only claim in the page still
+  // holds in spirit: nothing goes to a server, this stays on this device.
+  const STORAGE_KEY = 'krishimitra_farmer_profile';
+  const FIELD_IDS = ['pName', 'pState', 'pCrop', 'pLand', 'pType', 'pLang'];
+  const TOGGLE_KEYS = ['voice', 'notif', 'debug', 'demo'];
+
+  function loadProfile() {
+    let saved = {};
+    try {
+      saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    } catch (e) { saved = {}; }
+
+    FIELD_IDS.forEach(id => {
+      if (saved[id] !== undefined) document.getElementById(id).value = saved[id];
+    });
+    TOGGLE_KEYS.forEach(key => {
+      const el = document.querySelector(`[data-setting="${key}"]`);
+      if (el && saved.toggles && key in saved.toggles) {
+        el.classList.toggle('on', !!saved.toggles[key]);
+      }
+    });
+    if (saved.confidenceDisplay !== undefined) {
+      document.querySelector('.setting-select').value = saved.confidenceDisplay;
+    }
+  }
+
+  function saveProfile() {
+    const data = { toggles: {} };
+    FIELD_IDS.forEach(id => { data[id] = document.getElementById(id).value; });
+    TOGGLE_KEYS.forEach(key => {
+      const el = document.querySelector(`[data-setting="${key}"]`);
+      data.toggles[key] = el ? el.classList.contains('on') : false;
+    });
+    data.confidenceDisplay = document.querySelector('.setting-select').value;
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      return true;
+    } catch (e) {
+      return false; // private browsing / storage disabled — fail quietly, UI still works this session
+    }
+  }
+
+  loadProfile();
+
   document.querySelectorAll('.toggle').forEach(t => {
     t.addEventListener('click', () => t.classList.toggle('on'));
   });
 
   const toast = document.getElementById('saveToast');
   document.getElementById('saveBtn').addEventListener('click', () => {
+    saveProfile();
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 2200);
   });
@@ -306,6 +353,7 @@ body { background: var(--bg); color: var(--text-pri); display: flex; overflow: h
   document.getElementById('clearBtn').addEventListener('click', () => {
     document.getElementById('pName').value = '';
     document.getElementById('pLand').value = '';
+    try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
   });
 </script>
 </body>
