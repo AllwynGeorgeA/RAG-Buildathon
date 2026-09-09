@@ -24,6 +24,8 @@ uvicorn app.api.main:app --port 8000
 Open **http://localhost:8000** — it redirects straight to the chat UI
 (`/ui/chatbot-ui-green.html`). That's the primary, fully-functional surface.
 
+![KrishiMitra AI chat UI](docs/Screenshot.png)
+
 Optional classic UI alongside it: `streamlit run app/ui/streamlit_app.py` →
 `http://localhost:8501` (its sidebar links back to the same chat UI).
 
