@@ -436,7 +436,7 @@ body.chat-started .chat-thread { display: flex; }
 .composer-help { font-size: 10.5px; color: var(--text-ghost); margin-top: 9px; text-align: center; }
 
 .tribute-strip {
-  display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 12px; opacity: 0.9;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; opacity: 0.9;
 }
 .tribute-strip[hidden] { display: none; }
 .tribute-avatar {
@@ -532,6 +532,10 @@ body.chat-started .chat-thread { display: flex; }
   <div class="chat-scroll" id="chatScroll">
     <div class="hero" id="hero">
       <div class="hero-orb-wrap" id="heroOrbWrap"><div class="hero-orb"></div></div>
+      <div class="tribute-strip" id="tributeStrip" hidden>
+        <img class="tribute-avatar" id="tributeAvatar" src="assets/Namalvar.jpg" alt="Dr. G. Nammalvar">
+        <span class="tribute-text">In memory of <strong>Dr. G. Nammalvar</strong> — "Agriculture is not business… it's a way of life."</span>
+      </div>
       <div class="hero-welcome">Welcome to KrishiMitra AI</div>
       <div class="hero-title">How Can I Help With<br>Your Farming Today?</div>
 
@@ -578,10 +582,6 @@ body.chat-started .chat-thread { display: flex; }
       </div>
     </div>
     <div class="composer-help">Press Enter to send · <span id="webSearchHint">🌐 live web search ON for your next message</span></div>
-    <div class="tribute-strip" id="tributeStrip" hidden>
-      <img class="tribute-avatar" id="tributeAvatar" src="assets/Namalvar.jpg" alt="Dr. G. Nammalvar">
-      <span class="tribute-text">In memory of <strong>Dr. G. Nammalvar</strong> — "Agriculture is not business… it's a way of life."</span>
-    </div>
   </div>
 </main>
 
