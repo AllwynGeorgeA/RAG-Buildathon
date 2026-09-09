@@ -13,6 +13,26 @@ chatbot — every answer follows the chain:
 
 ---
 
+## 🚀 How to access the site
+
+```bash
+python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+python scripts/demo_seed.py          # only if data/vector_store is empty
+uvicorn app.api.main:app --port 8000
+```
+Open **http://localhost:8000** — it redirects straight to the chat UI
+(`/ui/chatbot-ui-green.html`). That's the primary, fully-functional surface.
+
+Optional classic UI alongside it: `streamlit run app/ui/streamlit_app.py` →
+`http://localhost:8501` (its sidebar links back to the same chat UI).
+
+No `OPENAI_API_KEY`? It still works — see [Installation](#installation) for
+the deterministic fallback. Full setup detail, env vars, and troubleshooting
+are further down; this is just the fastest path to a running app.
+
+---
+
 ## Table of contents
 
 1. [Problem statement](#problem-statement)
