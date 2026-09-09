@@ -1,5 +1,7 @@
 # 🌾 KrishiMitra AI
 
+![KrishiMitra AI — Simple help for every farmer](docs/krishimitra-banner.png)
+
 **Find the right farmer scheme. Understand why. Trust the evidence.**
 
 > Know your schemes. Verify your eligibility. Take the next step.
@@ -324,10 +326,19 @@ for a solo/demo deployment, not yet multi-tenant.
 ## Mobile app (PWA)
 
 The green UI is installable as a Progressive Web App — no separate native
-codebase, no app store, same FastAPI backend. On a phone, open
-`http://<your-machine-ip>:8000` in Chrome/Safari and use
-**"Add to Home Screen"**: it installs with its own icon and launches
-full-screen (no browser address bar), backed by:
+codebase, no app store, same FastAPI backend.
+
+To try it from a phone: connect it to the same network as this machine,
+then start the server reachable from other devices (default `uvicorn`
+only binds to `127.0.0.1`, i.e. this machine only):
+```bash
+uvicorn app.api.main:app --host 0.0.0.0 --port 8000
+```
+Find this machine's local IP (`ipconfig` on Windows / `ip addr` or
+`ifconfig` on macOS/Linux), then on the phone open
+`http://<that-ip>:8000` in Chrome/Safari and use **"Add to Home Screen"**:
+it installs with its own icon and launches full-screen (no browser address
+bar), backed by:
 
 - `web/manifest.json` — name, icons, `display: standalone`, theme colors
 - `web/sw.js` — a minimal service worker that caches the static app shell
