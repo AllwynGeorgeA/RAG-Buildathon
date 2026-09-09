@@ -52,17 +52,18 @@ are further down; this is just the fastest path to a running app.
 13. [Supported inputs](#supported-inputs)
 14. [Web UI (green theme)](#web-ui-green-theme)
 15. [Conversation history](#conversation-history)
-16. [Installation](#installation)
-17. [Environment variables](#environment-variables)
-18. [Running the crawler](#running-the-crawler)
-19. [Building the index & graph](#building-the-index--graph)
-20. [Running Streamlit](#running-streamlit)
-21. [Running the API](#running-the-api)
-22. [Running tests](#running-tests)
-23. [Running evaluation](#running-evaluation)
-24. [Demo walkthrough](#demo-walkthrough)
-25. [Known limitations](#known-limitations)
-26. [Future roadmap](#future-roadmap)
+16. [Mobile app (PWA)](#mobile-app-pwa)
+17. [Installation](#installation)
+18. [Environment variables](#environment-variables)
+19. [Running the crawler](#running-the-crawler)
+20. [Building the index & graph](#building-the-index--graph)
+21. [Running Streamlit](#running-streamlit)
+22. [Running the API](#running-the-api)
+23. [Running tests](#running-tests)
+24. [Running evaluation](#running-evaluation)
+25. [Demo walkthrough](#demo-walkthrough)
+26. [Known limitations](#known-limitations)
+27. [Future roadmap](#future-roadmap)
 
 ---
 
@@ -319,6 +320,27 @@ and `POST /conversations/{id}/messages` are the full surface — see
 Note: history is one shared SQLite file with no user accounts yet, so every
 visitor to a given server currently sees the same conversation list — fine
 for a solo/demo deployment, not yet multi-tenant.
+
+## Mobile app (PWA)
+
+The green UI is installable as a Progressive Web App — no separate native
+codebase, no app store, same FastAPI backend. On a phone, open
+`http://<your-machine-ip>:8000` in Chrome/Safari and use
+**"Add to Home Screen"**: it installs with its own icon and launches
+full-screen (no browser address bar), backed by:
+
+- `web/manifest.json` — name, icons, `display: standalone`, theme colors
+- `web/sw.js` — a minimal service worker that caches the static app shell
+  (HTML/CSS/JS/icons) for offline resilience opening the app, while every
+  API call (`/chat`, `/conversations/...`) is always network-first, never
+  cached — a farming-scheme answer must never be served stale
+- Icons generated with Pillow (already a project dependency) —
+  `web/icons/icon-192.png`, `icon-512.png`, `apple-touch-icon.png`
+
+This is a deliberate choice over a separate React Native/Flutter app: zero
+new toolchain, zero risk to the existing FastAPI/Streamlit project (every
+file here is new, nothing existing was modified to add it), and it reuses
+100% of the already-built, already-wired chat UI.
 
 ## Installation
 
