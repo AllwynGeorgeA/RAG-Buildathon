@@ -439,12 +439,20 @@ body.chat-started .chat-thread { display: flex; }
   display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 12px; opacity: 0.9;
 }
 .tribute-strip[hidden] { display: none; }
-.tribute-avatar { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-hover); flex-shrink: 0; }
-.tribute-text { font-size: 10.5px; color: var(--text-ghost); font-style: italic; }
+.tribute-avatar {
+  width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border-hover);
+  flex-shrink: 0; animation: tributeGlow 3.6s ease-in-out infinite, tributeIn 0.6s cubic-bezier(.16,1,.3,1) both;
+}
+@keyframes tributeGlow {
+  0%, 100% { box-shadow: 0 0 14px rgba(34,197,94,0.35), 0 0 28px rgba(34,197,94,0.15); }
+  50%      { box-shadow: 0 0 20px rgba(34,197,94,0.55), 0 0 40px rgba(34,197,94,0.26); }
+}
+@keyframes tributeIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+.tribute-text { font-size: 11.5px; color: var(--text-ghost); font-style: italic; }
 .tribute-text strong { color: var(--text-muted); font-style: normal; font-weight: 600; }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-orb, .hero, .hero-title, .msg-row, .typing-status, .scroll-bottom-btn { animation: none !important; }
+  .hero-orb, .hero, .hero-title, .msg-row, .typing-status, .scroll-bottom-btn, .tribute-avatar { animation: none !important; }
 }
 </style>
 </head>
@@ -571,7 +579,7 @@ body.chat-started .chat-thread { display: flex; }
     </div>
     <div class="composer-help">Press Enter to send · <span id="webSearchHint">🌐 live web search ON for your next message</span></div>
     <div class="tribute-strip" id="tributeStrip" hidden>
-      <img class="tribute-avatar" id="tributeAvatar" src="assets/nammalvar.jpg" alt="Dr. G. Nammalvar">
+      <img class="tribute-avatar" id="tributeAvatar" src="assets/Namalvar.jpg" alt="Dr. G. Nammalvar">
       <span class="tribute-text">In memory of <strong>Dr. G. Nammalvar</strong> — "Agriculture is not business… it's a way of life."</span>
     </div>
   </div>
@@ -1135,7 +1143,7 @@ body.chat-started .chat-thread { display: flex; }
   loadConversations();
 
   // Tribute strip only appears once the image actually exists on disk —
-  // stays invisible (not broken-looking) until web/assets/nammalvar.jpg is added.
+  // stays invisible (not broken-looking) until web/assets/Namalvar.jpg is added.
   const tributeAvatar = document.getElementById('tributeAvatar');
   const tributeStrip = document.getElementById('tributeStrip');
   tributeAvatar.addEventListener('load', () => { tributeStrip.hidden = false; });
